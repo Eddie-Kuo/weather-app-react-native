@@ -18,25 +18,29 @@ import { theme } from '../theme';
 export default function HomeScreen() {
   const [showSearch, toggleSearch] = useState(false);
   const [locations, setLocations] = useState([]);
+  const [weather, setWeather] = useState({});
 
   function handleLocation(location) {
     setLocations([]);
+    toggleSearch(false);
     fetchWeatherForecast({
       cityName: location.name,
       days: '7',
     }).then((data) => {
-      console.log('location weather', data);
+      setWeather(data);
+      console.log(data);
     });
   }
 
   function handleSearch(value) {
-    if (value.length > 2) {
+    if (value.length > 2)
       fetchLocations({ cityName: value }).then((data) => {
         setLocations(data);
       });
-    }
   }
   const handleTextDebounce = useCallback(debounce(handleSearch, 1200), []);
+
+  const { current, location } = weather;
 
   return (
     <View className='flex-1 relative'>
@@ -93,7 +97,8 @@ export default function HomeScreen() {
                     }>
                     <MapPinIcon size='20' color='gray' />
                     <Text className='text-black text-lg ml-2'>
-                      {location?.name}, {location?.country}
+                      {location?.name},{' '}
+                      {location?.region ? location?.region : location?.country}
                     </Text>
                   </TouchableOpacity>
                 );
@@ -106,8 +111,10 @@ export default function HomeScreen() {
         <View className='mx-4 flex justify-around flex-1 mb-2'>
           {/* Location */}
           <Text className='text-white text-center text-2xl font-bold'>
-            Austin,
-            <Text className='text-lg font-semibold text-gray-300'>Texas</Text>
+            {location?.name},
+            <Text className='text-lg font-semibold text-gray-300'>
+              {location?.region ? location?.region : location?.country}
+            </Text>
           </Text>
 
           {/* Weather Image */}
@@ -121,10 +128,10 @@ export default function HomeScreen() {
           {/* Degree Indicator */}
           <View className='space-y-2'>
             <Text className='text-center font-bold text-white text-6xl ml-5'>
-              76&#176;
+              {current?.temp_f}&#176;
             </Text>
             <Text className='text-center text-gray-300 text-xl tracking-widest'>
-              Partly Cloudy
+              {current?.condition.text}
             </Text>
           </View>
 
@@ -135,14 +142,18 @@ export default function HomeScreen() {
                 source={require('../assets/icons/wind.png')}
                 className='h-6 w-6'
               />
-              <Text className='text-white font-semibold text-base'>12mph</Text>
+              <Text className='text-white font-semibold text-base'>
+                {current?.wind_mph}mph
+              </Text>
             </View>
             <View className='flex-row space-x-2 items-center'>
               <Image
                 source={require('../assets/icons/drop.png')}
                 className='h-6 w-6'
               />
-              <Text className='text-white font-semibold text-base'>20%</Text>
+              <Text className='text-white font-semibold text-base'>
+                {current?.humidity}%
+              </Text>
             </View>
             <View className='flex-row space-x-2 items-center'>
               <Image
@@ -150,7 +161,7 @@ export default function HomeScreen() {
                 className='h-6 w-6'
               />
               <Text className='text-white font-semibold text-base'>
-                5:45 AM
+                {weather?.forecast?.forecastday[0]?.astro?.sunrise}
               </Text>
             </View>
           </View>
@@ -164,83 +175,23 @@ export default function HomeScreen() {
             <ScrollView
               horizontal
               contentContainerStyle={{ paddingHorizontal: 15 }}
-              showsHorizontalScrollIndicator={false}>
-              <View
-                className='flex justify-center items-center w-24 rounded-3xl py-3 space-y-1 mr-4'
-                style={{ backgroundColor: theme.bgWhite(0.15) }}>
-                <Image
-                  source={require('../assets/images/heavyrain.png')}
-                  className='h-11 w-11'
-                />
-                <Text className='text-white'>Monday</Text>
-                <Text className='text-white text-xl font-semibold'>
-                  76&#176;
-                </Text>
-              </View>
-              <View
-                className='flex justify-center items-center w-24 rounded-3xl py-3 space-y-1 mr-4'
-                style={{ backgroundColor: theme.bgWhite(0.15) }}>
-                <Image
-                  source={require('../assets/images/heavyrain.png')}
-                  className='h-11 w-11'
-                />
-                <Text className='text-white'>Tuesday</Text>
-                <Text className='text-white text-xl font-semibold'>
-                  76&#176;
-                </Text>
-              </View>
-              <View
-                className='flex justify-center items-center w-24 rounded-3xl py-3 space-y-1 mr-4'
-                style={{ backgroundColor: theme.bgWhite(0.15) }}>
-                <Image
-                  source={require('../assets/images/heavyrain.png')}
-                  className='h-11 w-11'
-                />
-                <Text className='text-white'>Wednesday</Text>
-                <Text className='text-white text-xl font-semibold'>
-                  76&#176;
-                </Text>
-              </View>
-              <View
-                className='flex justify-center items-center w-24 rounded-3xl py-3 space-y-1 mr-4'
-                style={{ backgroundColor: theme.bgWhite(0.15) }}>
-                <Image
-                  source={require('../assets/images/heavyrain.png')}
-                  className='h-11 w-11'
-                />
-                <Text className='text-white'>Thursday</Text>
-                <Text className='text-white text-xl font-semibold'>
-                  76&#176;
-                </Text>
-              </View>
-              <View
-                className='flex justify-center items-center w-24 rounded-3xl py-3 space-y-1 mr-4'
-                style={{ backgroundColor: theme.bgWhite(0.15) }}>
-                <Image
-                  source={require('../assets/images/heavyrain.png')}
-                  className='h-11 w-11'
-                />
-                <Text className='text-white'>Friday</Text>
-                <Text className='text-white text-xl font-semibold'>
-                  76&#176;
-                </Text>
-              </View>
-              <View
-                className='flex justify-center items-center w-24 rounded-3xl py-3 space-y-1 mr-4'
-                style={{ backgroundColor: theme.bgWhite(0.15) }}>
-                <Image
-                  source={require('../assets/images/heavyrain.png')}
-                  className='h-11 w-11'
-                />
-                <Text className='text-white'>Saturday</Text>
-                <Text className='text-white text-xl font-semibold'>
-                  76&#176;
-                </Text>
-              </View>
-            </ScrollView>
+              showsHorizontalScrollIndicator={false}></ScrollView>
           </View>
         </View>
       </SafeAreaView>
     </View>
   );
+}
+
+{
+  /* <View
+  className='flex justify-center items-center w-24 rounded-3xl py-3 space-y-1 mr-4'
+  style={{ backgroundColor: theme.bgWhite(0.15) }}>
+  <Image
+    source={require('../assets/images/heavyrain.png')}
+    className='h-11 w-11'
+  />
+  <Text className='text-white'>Monday</Text>
+  <Text className='text-white text-xl font-semibold'>76&#176;</Text>
+</View>; */
 }
