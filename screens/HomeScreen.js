@@ -17,18 +17,16 @@ import { theme } from '../theme';
 
 export default function HomeScreen() {
   const [showSearch, toggleSearch] = useState(false);
-  const [locations, setLocations] = useState([1, 2, 3]);
+  const [locations, setLocations] = useState([]);
 
   function handleLocation(location) {
     console.log(`Location of choice: ${location}`);
   }
 
   function handleSearch(value) {
-    console.log('value', value);
     if (value.length > 2) {
       fetchLocations({ cityName: value }).then((data) => {
-        console.log('api key', process.env.WEATHER_API_KEY);
-        console.log(data);
+        setLocations(data);
       });
     }
   }
@@ -89,7 +87,7 @@ export default function HomeScreen() {
                     }>
                     <MapPinIcon size='20' color='gray' />
                     <Text className='text-black text-lg ml-2'>
-                      Austin, Texas
+                      {location?.name}, {location?.country}
                     </Text>
                   </TouchableOpacity>
                 );
