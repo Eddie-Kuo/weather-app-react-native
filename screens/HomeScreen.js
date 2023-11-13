@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { MagnifyingGlassIcon } from 'react-native-heroicons/outline';
 import { CalendarDaysIcon, MapPinIcon } from 'react-native-heroicons/solid';
-import { fetchLocations } from '../api/weather';
+import { fetchLocations, fetchWeatherForecast } from '../api/weather';
 import { theme } from '../theme';
 
 export default function HomeScreen() {
@@ -20,7 +20,13 @@ export default function HomeScreen() {
   const [locations, setLocations] = useState([]);
 
   function handleLocation(location) {
-    console.log(`Location of choice: ${location}`);
+    setLocations([]);
+    fetchWeatherForecast({
+      cityName: location.name,
+      days: '7',
+    }).then((data) => {
+      console.log('location weather', data);
+    });
   }
 
   function handleSearch(value) {
