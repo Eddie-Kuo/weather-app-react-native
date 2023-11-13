@@ -13,6 +13,7 @@ import {
 import { MagnifyingGlassIcon } from 'react-native-heroicons/outline';
 import { CalendarDaysIcon, MapPinIcon } from 'react-native-heroicons/solid';
 import { fetchLocations, fetchWeatherForecast } from '../api/weather';
+import { weatherImages } from '../constants/WeatherImages';
 import { theme } from '../theme';
 
 export default function HomeScreen() {
@@ -175,23 +176,35 @@ export default function HomeScreen() {
             <ScrollView
               horizontal
               contentContainerStyle={{ paddingHorizontal: 15 }}
-              showsHorizontalScrollIndicator={false}></ScrollView>
+              showsHorizontalScrollIndicator={false}>
+              {weather?.forecast?.forecastday?.map((item, index) => {
+                const date = new Date(item.date);
+                const options = {
+                  weekday: 'long',
+                };
+                let dayName = date.toLocaleDateString('en-US', options);
+                dayName = dayName.split(',')[0];
+
+                return (
+                  <View
+                    key={index}
+                    className='flex justify-center items-center w-24 rounded-3xl py-3 space-y-1 mr-4'
+                    style={{ backgroundColor: theme.bgWhite(0.15) }}>
+                    <Image
+                      source={weatherImages[item?.day?.condition?.text] || null}
+                      className='h-11 w-11'
+                    />
+                    <Text className='text-white'>{dayName}</Text>
+                    <Text className='text-white text-xl font-semibold'>
+                      {item?.day?.avgtemp_f}&#176;
+                    </Text>
+                  </View>
+                );
+              })}
+            </ScrollView>
           </View>
         </View>
       </SafeAreaView>
     </View>
   );
-}
-
-{
-  /* <View
-  className='flex justify-center items-center w-24 rounded-3xl py-3 space-y-1 mr-4'
-  style={{ backgroundColor: theme.bgWhite(0.15) }}>
-  <Image
-    source={require('../assets/images/heavyrain.png')}
-    className='h-11 w-11'
-  />
-  <Text className='text-white'>Monday</Text>
-  <Text className='text-white text-xl font-semibold'>76&#176;</Text>
-</View>; */
 }
