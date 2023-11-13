@@ -99,7 +99,8 @@ export default function HomeScreen() {
                     <MapPinIcon size='20' color='gray' />
                     <Text className='text-black text-lg ml-2'>
                       {location?.name},{' '}
-                      {location?.region ? location?.region : location?.country}
+                      {/* {location?.region ? location?.region : location?.country} */}
+                      {location?.country}
                     </Text>
                   </TouchableOpacity>
                 );
@@ -115,13 +116,14 @@ export default function HomeScreen() {
             {location?.name},
             <Text className='text-lg font-semibold text-gray-300'>
               {location?.region ? location?.region : location?.country}
+              {/* {' ' + location?.country} */}
             </Text>
           </Text>
 
           {/* Weather Image */}
           <View className='flex-row justify-center'>
             <Image
-              source={require('../assets/images/partlycloudy.png')}
+              source={weatherImages[current?.condition?.text]}
               className='w-52 h-52'
             />
           </View>
