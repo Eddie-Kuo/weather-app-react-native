@@ -1,5 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
-import React, { useState } from 'react';
+import { debounce } from 'lodash';
+import React, { useCallback, useState } from 'react';
 import {
   Image,
   SafeAreaView,
@@ -11,6 +12,7 @@ import {
 } from 'react-native';
 import { MagnifyingGlassIcon } from 'react-native-heroicons/outline';
 import { CalendarDaysIcon, MapPinIcon } from 'react-native-heroicons/solid';
+import { fetchLocations } from '../api/weather';
 import { theme } from '../theme';
 
 export default function HomeScreen() {
@@ -20,6 +22,17 @@ export default function HomeScreen() {
   function handleLocation(location) {
     console.log(`Location of choice: ${location}`);
   }
+
+  function handleSearch(value) {
+    console.log('value', value);
+    if (value.length > 2) {
+      fetchLocations({ cityName: value }).then((data) => {
+        console.log('api key', process.env.WEATHER_API_KEY);
+        console.log(data);
+      });
+    }
+  }
+  const handleTextDebounce = useCallback(debounce(handleSearch, 1200), []);
 
   return (
     <View className='flex-1 relative'>
@@ -42,6 +55,7 @@ export default function HomeScreen() {
             {/* Search Input */}
             {showSearch ? (
               <TextInput
+                onChangeText={handleTextDebounce}
                 placeholder='Search City'
                 placeholderTextColor={'lightgrey'}
                 className='pl-5 h-10 flex-1 text-base text-white'
